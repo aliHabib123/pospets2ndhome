@@ -1,0 +1,198 @@
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Tayouneh
+879114</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="879114">96176015488</gsm>
+    			    <gsm messageId="879114">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>633.6000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Tayouneh
+174095</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="174095">96176015488</gsm>
+    			    <gsm messageId="174095">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>629.2000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Ashrafieh
+834730</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="834730">96171452313</gsm>
+    			    <gsm messageId="834730">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>624.8000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Badaro
+834243</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="834243">96171386906</gsm>
+    			    <gsm messageId="834243">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>620.4000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Ashrafieh
+203932</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="203932">96171452313</gsm>
+    			    <gsm messageId="203932">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>616.0000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Ashrafieh
+578778</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="578778">96171452313</gsm>
+    			    <gsm messageId="578778">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>611.6000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Tayouneh
+391845</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="391845">96176015488</gsm>
+    			    <gsm messageId="391845">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>607.2000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Badaro
+227937</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="227937">96171386906</gsm>
+    			    <gsm messageId="227937">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>602.8000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Sin el Fil
+547030</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="547030">96176749789</gsm>
+    			    <gsm messageId="547030">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>598.4000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Tayouneh
+542690</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="542690">96176015488</gsm>
+    			    <gsm messageId="542690">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>594.0000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Ashrafieh
+339390</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="339390">96171452313</gsm>
+    			    <gsm messageId="339390">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>589.6000</credits></RESPONSE>
+-------------------------
+

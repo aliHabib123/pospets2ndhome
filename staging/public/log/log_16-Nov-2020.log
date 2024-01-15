@@ -1,0 +1,54 @@
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Main Sin el Fil to Sin el Fil
+840179</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="840179">96176749789</gsm>
+    			    <gsm messageId="840179">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>-3</status><credits>0.9000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Main Sin el Fil to Sin el Fil
+170560</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="170560">96176749789</gsm>
+    			    <gsm messageId="170560">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>-3</status><credits>0.9000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Main Sin el Fil to Sin el Fil
+160884</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="160884">96176749789</gsm>
+    			    <gsm messageId="160884">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>-3</status><credits>0.9000</credits></RESPONSE>
+-------------------------
+

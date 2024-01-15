@@ -1,0 +1,108 @@
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Ashrafieh
+218707</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="218707">96171452313</gsm>
+    			    <gsm messageId="218707">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>1227.6000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Sin el Fil to Ashrafieh
+468843</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="468843">96171452313</gsm>
+    			    <gsm messageId="468843">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>1223.2000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Sin el Fil to Badaro
+182293</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="182293">96171386906</gsm>
+    			    <gsm messageId="182293">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>-3</status><credits>1223.2000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Tayouneh
+809135</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="809135">96176015488</gsm>
+    			    <gsm messageId="809135">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>-3</status><credits>1223.2000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Ashrafieh to Badaro
+825663</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="825663">96171386906</gsm>
+    			    <gsm messageId="825663">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>-3</status><credits>1223.2000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Ashrafieh
+478887</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="478887">96171452313</gsm>
+    			    <gsm messageId="478887">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>1218.8000</credits></RESPONSE>
+-------------------------
+

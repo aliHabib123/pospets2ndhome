@@ -1,0 +1,18 @@
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Badaro to Tayouneh
+446655</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="446655">96176015488</gsm>
+    			    <gsm messageId="446655">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>1918.4000</credits></RESPONSE>
+-------------------------
+

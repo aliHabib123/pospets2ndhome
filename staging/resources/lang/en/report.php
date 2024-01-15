@@ -1,0 +1,30 @@
+<?php
+
+return [
+
+    'reports' => 'Reports',
+    'closeout' => 'Closeout',
+    'list' => 'List',
+    'sales_report' => 'Sales Report',
+    'grand_total' => 'GRAND TOTAL',
+    'grand_profit' => 'PROFIT',
+    'date' => 'Date',
+    'sold_by' => 'Sold By',
+    'sold_to' => 'Sold To',
+    'discount' => 'Discount',
+    'total' => 'Total',
+    'profit' => 'Profit',
+    'cost' => 'Cost',
+    'sum' => 'Sum',
+    'sales' => 'Sales',
+    'services' => 'Services',
+    'expenses' => 'Expenses',
+    'comments' => 'Comments',
+    'detail' => 'Detail',
+    'category' => 'Category',
+    'quantity' => 'Quantity',
+    'qty' => 'Qty',
+    'name' => 'Name',
+    'receiving' => 'Receiving',
+    'rate' => 'Rate',
+];

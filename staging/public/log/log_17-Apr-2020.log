@@ -1,0 +1,18 @@
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Ashrafieh
+722845</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="722845">96171452313</gsm>
+    			    <gsm messageId="722845">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>1051.6000</credits></RESPONSE>
+-------------------------
+

@@ -1,0 +1,18 @@
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from Ashrafieh to Sin el Fil
+886797</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="886797">96176749789</gsm>
+    			    <gsm messageId="886797">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>2402.1000</credits></RESPONSE>
+-------------------------
+

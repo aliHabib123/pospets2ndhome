@@ -1,0 +1,36 @@
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Main Sin el Fil
+426275</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="426275">9613487198</gsm>
+    			    <gsm messageId="426275">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>646.8000</credits></RESPONSE>
+-------------------------
+
+<SMS>
+    		<authentification>
+    			<username>AliHabib</username>
+    			<password>Ali@2020$</password>
+    		</authentification>
+    		<message>
+    			<sender>Pet 2nd Home</sender>
+    			<text>New transfer from archive to Tayouneh
+699215</text>
+    			</message>
+    			<recipients>
+    			<gsm messageId="699215">96176015488</gsm>
+    			    <gsm messageId="699215">9613966125</gsm>
+    		</recipients>
+    	</SMS>
+<RESPONSE><status>2</status><credits>642.4000</credits></RESPONSE>
+-------------------------
+
