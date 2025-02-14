@@ -68,6 +68,7 @@
                         <div class="col-md-12">
                             <a href="{{ url('/sales') }}" type="button" class="btn btn-info   hidden-print">{{trans('sale.new_sale')}}</a>
                             <button type="button" onclick="printInvoice()" class="btn btn-info  hidden-print">{{trans('sale.print')}}</button>
+                            <button id="printInvoiceButton" class="btn btn-primary">Print Invoice</button>
 
                         </div>
                     </div>
@@ -81,5 +82,28 @@
     function printInvoice() {
         window.print();
     }
+</script>
+<script>
+    document.getElementById('printInvoiceButton').addEventListener('click', function() {
+        fetch('{{ url("/sale/print-invoice") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ invoiceId: '{{ $sales->id }}' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Invoice printed successfully');
+            } else {
+                alert('Failed to print invoice');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
 </script>
 @endsection

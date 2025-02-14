@@ -1,0 +1,2 @@
+/Applications/MAMP/bin/php/php7.4.33/bin/php artisan migrate
+/Applications/MAMP/bin/php/php7.4.33/bin/php /Applications/MAMP/bin/php/composer require mike42/escpos-php

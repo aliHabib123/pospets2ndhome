@@ -82,6 +82,7 @@ Route::resource('suppliers', 'SupplierController');
 Route::resource('receivings', 'ReceivingController');
 Route::resource('receiving-item', 'ReceivingItemController');
 Route::resource('sales', 'SaleController');
+Route::post('sale/print-invoice', 'SaleController@printInvoice');
 Route::resource('transfer', 'TransferController');
 Route::resource('employees', 'EmployeeController');
 Route::post('store-item-kits', 'ItemKitController@storeItemKits');
@@ -142,3 +143,8 @@ Route::get('generalReports/printWholesale/{id}', 'GeneralController@printWholesa
 Route::get('generalReports/inventoryLocations', 'GeneralController@inventoryLocations');
 Route::post('generalReports/inventoryItems', 'GeneralController@inventoryItems');
 //Route::get('itemsss/custom-search', 'GeneralController@customSearch');
+
+// Add this route for testing the printer
+Route::get('/test-printer', function(App\Services\PrinterService $printer) {
+    return $printer->testPrinter();
+});
