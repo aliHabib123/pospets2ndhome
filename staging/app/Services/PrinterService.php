@@ -23,7 +23,7 @@ class PrinterService
         try {
             $os = php_uname('s');
             $printerName = Setting::where('config', 'printer_name')->first()->value ?? 'POS-58';
-            
+
             if (stripos($os, 'Windows') !== false) {
                 $this->connector = new WindowsPrintConnector($printerName);
             } elseif (stripos($os, 'Darwin') !== false) {
@@ -33,7 +33,7 @@ class PrinterService
             } else {
                 $this->useDummyPrinter("Unsupported OS: " . $os);
             }
-            
+
             //$this->printer = new Printer($this->connector);
         } catch (\Exception $e) {
             $this->useDummyPrinter("Printer connection failed: " . $e->getMessage());
@@ -70,12 +70,38 @@ class PrinterService
         try {
             //$this->printer->initialize();
             $this->printer = new Printer($this->connector);
+            $this->printer->feed();
+
+            // Print merchant copy
+            // $this->printer->setJustification(Printer::JUSTIFY_CENTER);
+            // // $this->printer->text(str_pad("Merchant Copy", 40, " ", STR_PAD_BOTH) . "\n");
+            // $this->printer->text('Merchant Copy'. '\n');
+            // $this->printer->feed();
+
+            // Print merchant copy
+            $this->printer->setJustification(Printer::JUSTIFY_CENTER);
+            $this->printer->text(str_pad("Merchant Copy", 40, " ", STR_PAD_BOTH) . "\n");
+            $this->printer->feed();
+
+            // Print logo if exists
+            //$this->printLogo();
+
+            // Build receipt content
+            $this->buildReceiptContent($sale);
+
+            $this->printer->feed(2);
+            $this->printer->cut();
+
+
             // Print logo if exists
             $this->printLogo();
 
             // Build receipt content
             $this->buildReceiptContent($sale);
-            
+
+            $this->buildFooterContent();
+
+
             $this->printer->cut();
 
             // If using dummy printer, save to file before closing
@@ -83,10 +109,10 @@ class PrinterService
                 $this->saveReceiptToFile($sale->id, '');
             }
 
-            
+
             $this->printer->close();
             $this->printer->pulse();
-            
+
             return true;
         } catch (\Exception $e) {
             \Log::error("Printing failed: " . $e->getMessage());
@@ -101,7 +127,7 @@ class PrinterService
         $selectedLocationId = Session::get('selectedLocationId');
         $address = config('locations.locations')[$selectedLocationId] ?? 'Address';
         $phone = Setting::where('config', 'phone')->first()->value ?? 'Phone';
-        
+
         $this->printer->text(str_repeat("=", 40) . "\n");
         $this->printer->text(str_pad($companyName, 40, " ", STR_PAD_BOTH) . "\n");
         $this->printer->text(str_pad($address, 40, " ", STR_PAD_BOTH) . "\n");
@@ -110,9 +136,9 @@ class PrinterService
 
         // Sale info
         //$this->printer->setJustification(Printer::JUSTIFY_LEFT);
-        $this->printer->text(str_pad("Invoice #: " . $sale->id , 40, " ", STR_PAD_RIGHT) . "\n");
-        $this->printer->text(str_pad("Date: " . $sale->created_at , 40, " ", STR_PAD_RIGHT) . "\n");
-        $this->printer->text(str_pad("Customer: " . ($sale->customer ? $sale->customer->name : 'Walk-in') , 40, " ", STR_PAD_RIGHT) . "\n");
+        $this->printer->text(str_pad("Invoice #: " . $sale->id, 40, " ", STR_PAD_RIGHT) . "\n");
+        $this->printer->text(str_pad("Date: " . $sale->created_at, 40, " ", STR_PAD_RIGHT) . "\n");
+        $this->printer->text(str_pad("Customer: " . ($sale->customer ? $sale->customer->name : 'Walk-in'), 40, " ", STR_PAD_RIGHT) . "\n");
         $this->printer->setJustification(Printer::JUSTIFY_CENTER);
         $this->printer->text(str_repeat("-", 40) . "\n\n");
 
@@ -122,23 +148,23 @@ class PrinterService
         // Items
         foreach ($sale->saleItems as $index => $item) {
             $itemName = $item->item ? $item->item->item_name : 'Unknown Item';
-            
+
             // Calculate item total
             $itemTotal = $item->quantity * $item->selling_price;
             $subtotal += $itemTotal;
-            
+
             // Format prices without decimals and add LBP
             $unitPrice = number_format($item->selling_price, 0) . " LBP";
             $total = number_format($itemTotal, 0) . " LBP";
             //$this->printer->setJustification(Printer::JUSTIFY_LEFT);
             // Item name and quantity on first line (left aligned)
-            $this->printer->text(str_pad(($index + 1) . ". " . $itemName . " - QTY " . $item->quantity , 40, " ", STR_PAD_RIGHT) . "\n");
-            
+            $this->printer->text(str_pad(($index + 1) . ". " . $itemName . " - QTY " . $item->quantity, 40, " ", STR_PAD_RIGHT) . "\n");
+
             // Price on second line (left aligned)
-            $this->printer->text(str_pad("Price: " . $unitPrice , 40, " ", STR_PAD_RIGHT) . "\n");
-            
+            $this->printer->text(str_pad("Price: " . $unitPrice, 40, " ", STR_PAD_RIGHT) . "\n");
+
             // Total on third line (left aligned)
-            $this->printer->text(str_pad("Total: " . $total , 40, " ", STR_PAD_RIGHT) . "\n\n");
+            $this->printer->text(str_pad("Total: " . $total, 40, " ", STR_PAD_RIGHT) . "\n\n");
         }
         $this->printer->setJustification(Printer::JUSTIFY_CENTER);
         $this->printer->text(str_repeat("-", 40) . "\n");
@@ -148,30 +174,40 @@ class PrinterService
         if ($sale->discount && $sale->discount > 0) {
             $discountAmount = floatval($sale->discount);
         }
-        
+
         $grandTotal = $subtotal - $discountAmount;
 
         // Totals section aligned to the right
         $this->printer->text(str_pad("Subtotal: " . number_format($subtotal, 0) . " LBP", 40, " ", STR_PAD_LEFT) . "\n");
-        
+
         if ($sale->discount && $sale->discount > 0) {
             $this->printer->text(str_pad(
-                "Discount: -" . number_format($discountAmount, 0) . " LBP", 
-                40, 
-                " ", 
+                "Discount: -" . number_format($discountAmount, 0) . " LBP",
+                40,
+                " ",
+                STR_PAD_LEFT
+            ) . "\n");
+        } else {
+            $this->printer->text(str_pad(
+                "Discount: " . number_format($discountAmount, 0) . " LBP",
+                40,
+                " ",
                 STR_PAD_LEFT
             ) . "\n");
         }
-        
+
         $this->printer->text(str_pad("Grand Total: " . number_format($grandTotal, 0) . " LBP", 40, " ", STR_PAD_LEFT) . "\n");
         $this->printer->text(str_repeat("=", 40) . "\n");
+    }
 
+    protected function buildFooterContent()
+    {
         $this->printer->feed();
         $this->printer->text("Thank you for your visit!\n");
         $this->printer->setJustification(Printer::JUSTIFY_CENTER);
         $this->printer->feed();
         $this->printer->text("Follow us on Instagram: @pets2ndhomelb\n");
-        $this->printer->feed();
+        $this->printer->feed(2);
     }
 
     protected function saveReceiptToFile($saleId, $content)
@@ -180,7 +216,7 @@ class PrinterService
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
-        
+
         $filename = $directory . '/receipt_' . $saleId . '_' . date('Y-m-d_H-i-s') . '.txt';
         file_put_contents($filename, $content);
         \Log::info("Receipt saved to file: " . $filename);
@@ -194,7 +230,7 @@ class PrinterService
             $this->printer = new Printer($this->connector);
             $this->printer->feed(2);
             // Print logo if exists
-            $this->printLogo();        
+            $this->printLogo();
 
             $testReceipt = str_repeat("=", 40) . "\n";
             $testReceipt .= str_pad("TEST RECEIPT", 40, " ", STR_PAD_BOTH) . "\n";
