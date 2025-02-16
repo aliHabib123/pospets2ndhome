@@ -67,7 +67,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <a href="{{ url('/sales') }}" type="button" class="btn btn-info   hidden-print">{{trans('sale.new_sale')}}</a>
-                            <button type="button" onclick="printInvoice()" class="btn btn-info  hidden-print">{{trans('sale.print')}}</button>
+                            {{-- <button type="button" onclick="printInvoice()" class="btn btn-info  hidden-print">{{trans('sale.print')}}</button> --}}
                             <button id="printInvoiceButton" class="btn btn-primary">Print Invoice</button>
 
                         </div>
@@ -78,32 +78,69 @@
         </div>
     </div>
 </div>
+@php
+    $companyName = App\Setting::where('config', 'company_name')->first()->value ?? 'Company Name';
+    $selectedLocationId = Session::get('selectedLocationId');
+    $address = config('locations.locations')[$selectedLocationId] ?? 'Address';
+    $phone = App\Setting::where('config', 'phone')->first()->value ?? 'Phone';
+@endphp
 <script>
     function printInvoice() {
         window.print();
     }
-</script>
-<script>
-    document.getElementById('printInvoiceButton').addEventListener('click', function() {
-        fetch('{{ url("/sale/print-invoice") }}', {
+
+    function sendPrintRequest() {
+        // Prepare the print data
+        const printData = {
+            customer_name: '{{ $sales->customer->name === "Customer" ? "Walk-In" : $sales->customer->name }}',
+            date: '{{ now()->format("Y-m-d H:i:s") }}',
+            invoice_number: 'SALE{{ $saleItemsData->sale_id }}',
+            company_name: '{{ $companyName }}',
+            branch_name: '{{ $address }}',
+            phone: '{{ $phone }}',
+            items: [
+                @foreach($saleItems as $item)
+                {
+                    name: '{{ $item->item->item_name }}',
+                    quantity: {{ $item->quantity }},
+                    price: '{{ number_format($item->selling_price, 0) }} {{ $sales_currency }}',
+                    total: '{{ number_format($item->total_selling, 0) }} {{ $sales_currency }}'
+                },
+                @endforeach
+            ],
+            subtotal: '{{ number_format($total, 0) }} {{ $sales_currency }}',
+            discount: '{{ number_format($sales->discount, 0) }} {{ $sales_currency }}',
+            grand_total: '{{ number_format($grandTotal, 0) }} {{ $sales_currency }}'
+        };
+
+        // Send request to local printer service
+        fetch('http://localhost/print/index.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                'X-API-Key': '{{ config("services.printer.api_key") }}'
             },
-            body: JSON.stringify({ invoiceId: '{{ $sales->id }}' })
+            body: JSON.stringify(printData)
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Invoice printed successfully');
+                console.log('Invoice sent to printer successfully');
             } else {
-                alert('Failed to print invoice');
+                console.error('Failed to send invoice to printer');
             }
         })
         .catch(error => {
             console.error('Error:', error);
         });
+    }
+
+    // Call print function when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        sendPrintRequest();
     });
+
+    // Keep the manual print button functionality
+    document.getElementById('printInvoiceButton').addEventListener('click', sendPrintRequest);
 </script>
 @endsection

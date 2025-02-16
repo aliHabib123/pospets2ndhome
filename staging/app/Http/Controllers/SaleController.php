@@ -175,11 +175,6 @@ class SaleController extends Controller
         DB::update("UPDATE sales SET  discount_percentage = $discount_percentage where id = $sale_id ");
         DB::update("UPDATE sale_items SET  discount = total_selling * $discount_percentage / 100 where sale_id = $sale_id");
 
-        if ($sales) {
-            // Print receipt
-            $this->printerService->printReceipt($sales);
-        }
-
         //delete all data on SaleTemp model
         SaleTemp::truncate();
         $itemssale = SaleItem::where('sale_id', $saleItemsData->sale_id)->get();

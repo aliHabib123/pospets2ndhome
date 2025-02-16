@@ -34,5 +34,7 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
-
+    'printer' => [
+        'api_key' => env('PRINTER_API_KEY', ''),
+    ],
 ];
