@@ -12,6 +12,7 @@ use App\Inventory;
 use App\Setting;
 use App\Customer;
 use App\Item, App\ItemKitItem;
+use App\Services\PrinterService;
 use App\Http\Requests\SaleRequest;
 use \Auth, \Redirect, \Validator, \Input, \Session;
 use Illuminate\Support\Facades\DB;
@@ -20,10 +21,12 @@ use Illuminate\Support\Facades\Gate;
 
 class SaleController extends Controller
 {
+    protected $printerService;
 
-    public function __construct()
+    public function __construct(PrinterService $printerService)
     {
         $this->middleware('auth');
+        $this->printerService = $printerService;
     }
 
     /**
@@ -172,7 +175,6 @@ class SaleController extends Controller
         DB::update("UPDATE sales SET  discount_percentage = $discount_percentage where id = $sale_id ");
         DB::update("UPDATE sale_items SET  discount = total_selling * $discount_percentage / 100 where sale_id = $sale_id");
 
-
         //delete all data on SaleTemp model
         SaleTemp::truncate();
         $itemssale = SaleItem::where('sale_id', $saleItemsData->sale_id)->get();
@@ -234,5 +236,26 @@ class SaleController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function printInvoice(Request $request, PrinterService $printerService)
+    {
+        $invoiceId = $request->input('invoiceId');
+
+        // Fetch the invoice details (you may need to adjust this based on your data structure)
+        $invoice = Sale::find($invoiceId);
+
+        if (!$invoice) {
+            return response()->json(['success' => false, 'message' => 'Invoice not found']);
+        }
+
+        // Print the invoice using PrinterService
+        $printResult = $printerService->printReceipt($invoice);
+
+        if ($printResult) {
+            return response()->json(['success' => true, 'message' => 'Invoice printed successfully']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Failed to print invoice']);
     }
 }
