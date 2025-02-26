@@ -82,7 +82,7 @@
     $companyName = App\Setting::where('config', 'company_name')->first()->value ?? 'Company Name';
     $selectedLocationId = Session::get('selectedLocationId');
     $address = config('locations.locations')[$selectedLocationId] ?? 'Address';
-    $phone = App\Setting::where('config', 'phone')->first()->value ?? 'Phone';
+    $phone = config('locations.phones')[$selectedLocationId] ?? 'Phone';
 @endphp
 <script>
     function printInvoice() {

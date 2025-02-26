@@ -109,9 +109,9 @@ class PrinterService
                 $this->saveReceiptToFile($sale->id, '');
             }
 
-
-            $this->printer->close();
             $this->printer->pulse();
+            $this->printer->close();
+            
 
             return true;
         } catch (\Exception $e) {
@@ -126,7 +126,7 @@ class PrinterService
         $companyName = Setting::where('config', 'company_name')->first()->value ?? 'Company Name';
         $selectedLocationId = Session::get('selectedLocationId');
         $address = config('locations.locations')[$selectedLocationId] ?? 'Address';
-        $phone = Setting::where('config', 'phone')->first()->value ?? 'Phone';
+        $phone = config('locations.phones')[$selectedLocationId] ?? 'Phone';
 
         $this->printer->text(str_repeat("=", 40) . "\n");
         $this->printer->text(str_pad($companyName, 40, " ", STR_PAD_BOTH) . "\n");
