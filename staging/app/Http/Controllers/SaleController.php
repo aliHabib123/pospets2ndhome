@@ -21,12 +21,12 @@ use Illuminate\Support\Facades\Gate;
 
 class SaleController extends Controller
 {
-    protected $printerService;
+    //protected $printerService;
 
-    public function __construct(PrinterService $printerService)
+    public function __construct()
     {
         $this->middleware('auth');
-        $this->printerService = $printerService;
+        //$this->printerService = $printerService;
     }
 
     /**
