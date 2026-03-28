@@ -27,8 +27,9 @@
                             <td>@{{item.upc_ean_isbn}}<br>
                                 <b>@{{item.item_name}}</b><br>
 
-                                <span style="color: #a50000;">{{$currency}} @{{item.selling_price }} - {{trans('sale.quantity')}} : @{{item.quantity}}</span> <br>
+                                <span style="color: #0066cc;">USD @{{item.selling_price | number:2 }}</span> / 
                                 <span style="color: #a50000;">{{$sales_currency}} @{{item.selling_price * rate | number }}</span> <br>
+                                {{trans('sale.quantity')}} : @{{item.quantity}}<br>
                                 @{{item.type_name}} - @{{item.name}}
                             <td>
                                 <button class="btn-outline btn-success btn-circle" type="button" ng-click="addSaleTemp(item)"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
@@ -52,10 +53,16 @@
                         </tr>
                         <tr ng-repeat="newsaletemp in saletemp">
                             <td>@{{newsaletemp.item.item_name}}</td>
-                            <td>{{$sales_currency}} @{{newsaletemp.item.selling_price * rate | number }}</td}>
+                            <td>
+                                <span style="color: #0066cc;">USD @{{newsaletemp.item.selling_price | number:2 }}</span><br>
+                                <span style="color: #a50000;">{{$sales_currency}} @{{newsaletemp.item.selling_price * rate | number }}</span>
+                            </td>
                             <td><input type="text" style="text-align:center" autocomplete="off" name="quantity" ng-change="disableButton()" ng-blur="updateSaleTemp(newsaletemp)" ng-model="newsaletemp.quantity" size="2">
                             </td>
-                            <td>{{$sales_currency}} @{{newsaletemp.item.selling_price * newsaletemp.quantity * rate | number }}</td>
+                            <td>
+                                <span style="color: #0066cc;">USD @{{newsaletemp.item.selling_price * newsaletemp.quantity | number:2 }}</span><br>
+                                <span style="color: #a50000;">{{$sales_currency}} @{{newsaletemp.item.selling_price * newsaletemp.quantity * rate | number }}</span>
+                            </td>
                             <td>
                                 <button class="btn-outline btn-danger btn-circle" type="button" ng-click="removeSaleTemp(newsaletemp.id)"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
                             </td>
@@ -98,7 +105,10 @@
                             <div class="form-group">
                                 <label for="supplier_id" class="col-sm-3 control-label">{{trans('sale.amount_due')}}</label>
                                 <div class="col-sm-9">
-                                    <p class="form-control-static"><b>{{$sales_currency}} @{{sum(saletemp) | number}}</b></p>
+                                    <p class="form-control-static">
+                                        <span style="color: #0066cc;"><b>USD @{{sum(saletemp) / rate | number:2}}</b></span><br>
+                                        <span style="color: #a50000;"><b>{{$sales_currency}} @{{sum(saletemp) | number}}</b></span>
+                                    </p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -113,7 +123,38 @@
                             <div class="form-group">
                                 <label for="amount_due" class="col-sm-3 control-label">{{trans('sale.grand_total')}}</label>
                                 <div class="col-sm-9">
-                                    <p class="form-control-static">{{$sales_currency}} @{{ sum(saletemp) - discount | number}}</p>
+                                    <p class="form-control-static">
+                                        <span style="color: #0066cc;"><b>USD @{{(sum(saletemp) - discount) / rate | number:2}}</b></span><br>
+                                        <span style="color: #a50000;"><b>{{$sales_currency}} @{{ sum(saletemp) - discount | number}}</b></span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div>&nbsp;</div>
+                            <div class="form-group">
+                                <label for="payment_usd" class="col-sm-3 control-label">Payment USD</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">USD</div>
+                                        <input type="text" class="form-control" id="payment_usd" ng-model="paymentUSD" ng-change="calculateChange()" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="payment_lbp" class="col-sm-3 control-label">Payment {{$sales_currency}}</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="input-group-addon">{{$sales_currency}}</div>
+                                        <input type="text" class="form-control" id="payment_lbp" ng-model="paymentLBP" ng-change="calculateChange()" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-show="changeUSD != null || changeLBP != null">
+                                <label class="col-sm-3 control-label">Change</label>
+                                <div class="col-sm-9">
+                                    <p class="form-control-static">
+                                        <span style="color: #0066cc;" ng-show="changeUSD > 0"><b>USD @{{changeUSD | number:2}}</b></span>
+                                        <span style="color: #a50000;" ng-show="changeLBP > 0"><br>{{$sales_currency}} @{{changeLBP | number}}</b></span>
+                                    </p>
                                 </div>
                             </div>
                             <div>&nbsp;</div>
@@ -139,5 +180,5 @@
 @endsection
 @section('script')
 {!! Html::script('js/angular.min.js', array('type' => 'text/javascript')) !!}
-{!! Html::script('js/sale.js?v=1.1.1', array('type' => 'text/javascript')) !!}
+{!! Html::script('js/sale.js?v=1.1.2', array('type' => 'text/javascript')) !!}
 @endsection

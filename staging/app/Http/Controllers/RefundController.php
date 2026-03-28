@@ -201,6 +201,9 @@ class RefundController extends Controller
 
     public function updateSaleInvoice()
     {
+        if (Auth::user()->hasRole('User')) {
+            return Response::json(['error' => 'Unauthorized - You do not have permission to edit sales'], 401);
+        }
         $invoice = Input::get('invoice');
         $items = Input::get('items');
         //print_r($items);die();
