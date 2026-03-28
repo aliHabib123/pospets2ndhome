@@ -103,6 +103,29 @@
       $scope.disableButton = function(){
         $scope.buttonDisabled = true;
       };
+      $scope.paymentUSD = 0;
+      $scope.paymentLBP = 0;
+      $scope.changeUSD = null;
+      $scope.changeLBP = null;
+      $scope.calculateChange = function() {
+        var grandTotal = $scope.sum($scope.saletemp) - ($scope.discount || 0);
+        var grandTotalUSD = grandTotal / $scope.rate;
+        
+        var totalPaymentUSD = parseFloat($scope.paymentUSD || 0);
+        var totalPaymentLBP = parseFloat($scope.paymentLBP || 0);
+        
+        var totalPaymentInLBP = (totalPaymentUSD * $scope.rate) + totalPaymentLBP;
+        
+        var changeInLBP = totalPaymentInLBP - grandTotal;
+        
+        if (changeInLBP > 0) {
+          $scope.changeUSD = changeInLBP / $scope.rate;
+          $scope.changeLBP = changeInLBP;
+        } else {
+          $scope.changeUSD = 0;
+          $scope.changeLBP = 0;
+        }
+      };
     },
   ]);
 })();

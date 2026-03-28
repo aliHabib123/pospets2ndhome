@@ -27,7 +27,7 @@
                     <div>
                         <span style="font-size: 12px;line-height: 1.2"><?php echo $item->item_name; ?></span> <span style="font-size: 12px;font-weight: bold;"><?php echo intval($item->selling_price); ?>LL</span>
                         <?php
-                        echo file_get_contents('http://pettownshop.com/staging/barcode/barcode.php?f=svg&s=itf&p=10&ph=0&wn=10&h=50&d=' . $item->upc_ean_isbn);
+                        echo file_get_contents('https://pos.pets2ndhome.com/staging/barcode/barcode.php?f=svg&s=itf&p=10&ph=0&wn=10&h=50&d=' . $item->upc_ean_isbn);
                         //echo file_get_contents('http://localhost/barcode_upc/barcode.php?f=svg&s=ean-128&p=10&ph=0&wn=10&d=0000000196&w=200');
                         //echo file_get_contents('http://pettownshop.com/staging/barcode/barcode.php?f=svg&s=code-128&d='.$item->upc_ean_isbn);
                         ?>

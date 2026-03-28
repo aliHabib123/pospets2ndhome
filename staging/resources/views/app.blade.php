@@ -192,9 +192,6 @@ error_reporting(E_ALL);
                             @if(Auth::user()->hasPermissionTo('sale_report'))
                             <li><a href="{{ url('/generalReports/sales') }}">{{trans('menu.sales_report')}}</a></li>
                             @endif
-                            @if(Auth::user()->hasPermissionTo('reports'))
-
-                            @endif
                             @if(Auth::user()->hasPermissionTo('closeout'))
                             <li><a href="{{ url('/generalReports/closeout') }}">{{trans('menu.closeout')}}</a></li>
                             @endif
