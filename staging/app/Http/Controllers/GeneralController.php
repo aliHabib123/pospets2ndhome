@@ -266,6 +266,9 @@ class GeneralController extends Controller
 
     public function refundSale($id)
     {
+        if (Auth::user()->hasRole('User')) {
+            abort(401, 'Unauthorized - You do not have permission to edit sales');
+        }
         //echo $id;
         return view('sale.refund')
             ->with('invoiceId', $id);

@@ -93,7 +93,11 @@ use Illuminate\Support\Facades\Auth; ?>
                                         {{trans('report-sale.detail')}}</a>
 
                                 </td>
-                                <td> <a class="btn btn-small btn-warning" href="{{URL::to('/generalReports/refundSale')}}/{{ $value->id }}">Edit</a></td>
+                                <td>
+                                    @if (!Auth::user()->hasRole('User'))
+                                    <a class="btn btn-small btn-warning" href="{{URL::to('/generalReports/refundSale')}}/{{ $value->id }}">Edit</a>
+                                    @endif
+                                </td>
                             </tr>
 
                             <tr class="collapse" id="detailedSales{{ $value->id }}">
