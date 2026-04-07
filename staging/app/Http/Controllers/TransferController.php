@@ -189,37 +189,49 @@ class TransferController extends Controller
          To: Mobile Destination Number (can accept both local and international format, i.e: 03xxxxxx or 9613xxxxxx without leading + or 00), to submit_Multi please separate numbers by comma.
          Text : Text Message (text should be submitted as utf8 standards)
          */
-        $senderName = "Pet2ndHome";
-        $text = "New transfer from $fromLocationName to $toLocationName\n" . $transfer->confirm_code;
-        $adminMobileNumber = "9613966125";
-        // Your POST data
-        $data = http_build_query(array(
-            'username' => 'A.Habib',
-            'password' => 'go@2159',
-            'action' => 'sendsms',
-            'from' => $senderName,
-            'to' => $locationReceiverMobileNumber . ',' . $adminMobileNumber,
-            'text' => $text,
-        ));
+        // SMS DISABLED - Set to true to re-enable SMS notifications
+        $smsEnabled = false;
+        
+        if ($smsEnabled) {
+            $senderName = "Pet2ndHome";
+            $text = "New transfer from $fromLocationName to $toLocationName\n" . $transfer->confirm_code;
+            $adminMobileNumber = "9613966125";
+            // Your POST data
+            $data = http_build_query(array(
+                'username' => 'A.Habib',
+                'password' => 'go@2159',
+                'action' => 'sendsms',
+                'from' => $senderName,
+                'to' => $locationReceiverMobileNumber . ',' . $adminMobileNumber,
+                'text' => $text,
+            ));
 
-        // Make GET request
-        $response = file_get_contents('https://globesms.net/smshub/api.php?' . $data);
-        //$response = curl_exec($ch);//old API
-        //curl_close($ch);//old API
+            // Make GET request using cURL (more reliable SSL handling)
+            $url = 'https://globesms.net/smshub/api.php?' . $data;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            $response = curl_exec($ch);
+            if (curl_errno($ch)) {
+                $response = 'SMS Error: ' . curl_error($ch);
+            }
+            curl_close($ch);
 
-
-
-
-        $log_msg = $text . PHP_EOL . $response . PHP_EOL . '-------------------------' . PHP_EOL;
-        //Log sms
-        $log_filename = "log";
-        if (!file_exists($log_filename)) {
-            // create directory/folder uploads.
-            mkdir($log_filename, 0777, true);
+            $log_msg = $text . PHP_EOL . $response . PHP_EOL . '-------------------------' . PHP_EOL;
+            //Log sms
+            $log_filename = "log";
+            if (!file_exists($log_filename)) {
+                // create directory/folder uploads.
+                mkdir($log_filename, 0777, true);
+            }
+            $log_file_data = $log_filename . '/log_' . date('d-M-Y') . '.log';
+            // if you don't add `FILE_APPEND`, the file will be erased each time you add a log
+            file_put_contents($log_file_data, $log_msg . "\n", FILE_APPEND);
         }
-        $log_file_data = $log_filename . '/log_' . date('d-M-Y') . '.log';
-        // if you don't add `FILE_APPEND`, the file will be erased each time you add a log
-        file_put_contents($log_file_data, $log_msg . "\n", FILE_APPEND);
         //end of log sms
         //end sms send
 
