@@ -94,6 +94,7 @@ Route::resource('api/transferitems', 'TransferApiController');
 Route::resource('api/item', 'ReceivingApiController');
 Route::resource('api/receivingtemp', 'ReceivingTempApiController');
 Route::resource('api/transfertemp', 'TransferTempApiController');
+Route::post('api/transfer/validate', 'TransferTempApiController@validateTransfer');
 
 Route::resource('api/saletemp', 'SaleTempApiController');
 

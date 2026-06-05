@@ -137,4 +137,55 @@ class TransferTempApiController extends Controller
         TransferTemp::destroy($id);
     }
 
+    /**
+     * Validate transfer items quantities against current stock
+     *
+     * @return Response
+     */
+    public function validateTransfer()
+    {
+        $location_id = Session::get('selectedLocationId');
+        $items = Input::get('items');
+        
+        if (empty($items)) {
+            return Response::json([
+                'valid' => false,
+                'message' => 'No items to transfer'
+            ]);
+        }
+
+        $errors = [];
+        
+        foreach ($items as $item) {
+            $itemQuantity = ItemQuantity::where('location_id', $location_id)
+                ->where('item_id', $item['item_id'])
+                ->first();
+            
+            $requestedQty = intval($item['quantity']);
+            $availableQty = $itemQuantity ? intval($itemQuantity->quantity) : 0;
+            
+            if ($requestedQty > $availableQty) {
+                $itemName = isset($item['item']['item_name']) ? $item['item']['item_name'] : $item['item_name'];
+                $errors[] = "{$itemName}: requested {$requestedQty}, available {$availableQty}";
+            }
+            
+            if ($requestedQty <= 0) {
+                $itemName = isset($item['item']['item_name']) ? $item['item']['item_name'] : $item['item_name'];
+                $errors[] = "{$itemName}: quantity must be greater than 0";
+            }
+        }
+        
+        if (!empty($errors)) {
+            return Response::json([
+                'valid' => false,
+                'message' => implode("\n", $errors)
+            ]);
+        }
+        
+        return Response::json([
+            'valid' => true,
+            'message' => 'All quantities validated'
+        ]);
+    }
+
 }

@@ -80,41 +80,125 @@ class TransferController extends Controller
             return redirect('/locations/choose');
         }
 
-
         $fromLocation = $request->session()->get('selectedLocationId');
         $toLocation = Input::get('toLocation');
 
-        $fromLocationName = DB::table('locations')->where('id', $fromLocation)->first();
-        $toLocationName = DB::table('locations')->where('id', $toLocation)->first();
-        $toLocationName = $toLocationName->name;
-        $fromLocationName =  $fromLocationName->name;
+        // Validate toLocation exists
+        if (empty($toLocation)) {
+            Session::flash('warning', 'Please select a destination location!');
+            return Redirect::to('transfer');
+        }
 
+        $fromLocationData = DB::table('locations')->where('id', $fromLocation)->first();
+        $toLocationData = DB::table('locations')->where('id', $toLocation)->first();
+        
+        // Validate both locations exist
+        if (!$fromLocationData || !$toLocationData) {
+            Session::flash('warning', 'Invalid location selected!');
+            return Redirect::to('transfer');
+        }
+        
+        $toLocationName = $toLocationData->name;
+        $fromLocationName = $fromLocationData->name;
+
+        // Get transfer items and lock them to prevent race conditions
         $transferItems = TransferTemp::where('location_id', $fromLocation)
             ->WhereNull('transfer_id')
+            ->lockForUpdate()
             ->get();
 
+        // Validate items exist
         if (Session::get('transfer.complete') == "true" || count($transferItems) == 0) {
-            Session::flash('warning', 'No items!');
+            Session::flash('warning', 'No items to transfer!');
             return Redirect::to('transfer');
         }
 
         if (intval($fromLocation) == intval($toLocation)) {
-
-            Session::flash('warning', 'Check locations!');
+            Session::flash('warning', 'Cannot transfer to the same location!');
             return Redirect::to('transfer');
         }
 
-        $transfer = new Transfer();
-        $transfer->user_id = Auth::user()->id;
-        $transfer->from_location = $fromLocation;
-        $transfer->to_location = $toLocation;
-        $transfer->note = Input::get('note');
-        $transfer->confirm_code = mt_rand(100000, 999999);
-        $transfer->status = 0;
-        $transfer->save();
+        // Validate all item quantities before starting transaction
+        $validationErrors = [];
+        foreach ($transferItems as $item) {
+            $itemQuantity = ItemQuantity::where([
+                ['item_id', '=', $item->item_id],
+                ['location_id', '=', $fromLocation]
+            ])->first();
+            
+            if (!$itemQuantity || $itemQuantity->quantity < $item->quantity) {
+                $availableQty = $itemQuantity ? $itemQuantity->quantity : 0;
+                $validationErrors[] = "Item '{$item->item_name}': requested {$item->quantity}, available {$availableQty}";
+            }
+        }
+        
+        if (!empty($validationErrors)) {
+            Session::flash('warning', 'Quantity mismatch: ' . implode('; ', $validationErrors));
+            return Redirect::to('transfer');
+        }
+
+        // Use database transaction to ensure atomicity
+        try {
+            $result = DB::transaction(function () use ($fromLocation, $toLocation, $transferItems, $fromLocationName, $toLocationName) {
+                $transfer = new Transfer();
+                $transfer->user_id = Auth::user()->id;
+                $transfer->from_location = $fromLocation;
+                $transfer->to_location = $toLocation;
+                $transfer->note = Input::get('note');
+                $transfer->confirm_code = mt_rand(100000, 999999);
+                $transfer->status = 0;
+                $transfer->save();
+
+                // Process each transfer item within the transaction
+                foreach ($transferItems as $value) {
+                    $itemQuantity = ItemQuantity::where([
+                        ['item_id', '=', $value->item_id],
+                        ['location_id', '=', $fromLocation]
+                    ])->lockForUpdate()->first();
+                    
+                    $qtyBefore = 0;
+                    if ($itemQuantity) {
+                        $qtyBefore = $itemQuantity->quantity;
+                    }
+                    
+                    // Double-check quantity is still available
+                    if (!$itemQuantity || $itemQuantity->quantity < $value->quantity) {
+                        throw new \Exception("Insufficient quantity for item: {$value->item_name}");
+                    }
+                    
+                    $value->transfer_id = $transfer->id;
+                    $value->save();
+
+                    $inventories = new Inventory;
+                    $inventories->item_id = $value->item_id;
+                    $inventories->user_id = Auth::user()->id;
+                    $inventories->location_id = $fromLocation;
+                    $inventories->in_out_qty = -($value->quantity);
+                    $inventories->remarks = 'Transfer quantity id:' . $transfer->id;
+                    $inventories->qty_before_transaction = $qtyBefore;
+                    $inventories->save();
+
+                    $itemQuantity->quantity = $itemQuantity->quantity - ($value->quantity);
+                    $itemQuantity->save();
+                }
+
+                return [
+                    'transfer' => $transfer,
+                    'transferItems' => $transferItems
+                ];
+            });
+
+            $transfer = $result['transfer'];
+            $transferItems = $result['transferItems'];
+
+        } catch (\Exception $e) {
+            Session::flash('warning', 'Transfer failed: ' . $e->getMessage());
+            return Redirect::to('transfer');
+        }
+
         //send sms
         $locationInfo = DB::table('locations')->where('id', $toLocation)->first();
-        $locationReceiverMobileNumber =  $locationInfo->mobile;
+        $locationReceiverMobileNumber = $locationInfo->mobile;
 
         //         $apiURL = "http://api.infobip.com";
         //         $username = "AliHabib";
@@ -150,32 +234,6 @@ class TransferController extends Controller
         //         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         //         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         // response of the POST request
-
-        foreach ($transferItems as $value) {
-
-            $itemQuantity = ItemQuantity::where([['item_id', '=', $value->item_id], ['location_id', '=', $fromLocation]])
-                ->first();
-            $qtyBefore = 0;
-            if ($itemQuantity) {
-                $qtyBefore = $itemQuantity->quantity;
-            }
-            $value->transfer_id = $transfer->id;
-            $value->save();
-
-            $inventories = new Inventory;
-            $inventories->item_id = $value->item_id;
-            $inventories->user_id = Auth::user()->id;
-            $inventories->location_id = $fromLocation;
-            $inventories->in_out_qty = - ($value->quantity);
-            $inventories->remarks = 'Transfer quantity id:' . $transfer->id;
-            $inventories->qty_before_transaction = $qtyBefore;
-            $inventories->save();
-
-
-
-            $itemQuantity->quantity = $itemQuantity->quantity - ($value->quantity);
-            $itemQuantity->save();
-        }
 
         /*
          Sending message API

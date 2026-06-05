@@ -87,7 +87,7 @@
 
                         <div class="row">
 
-                            {!! Form::open(array('url' => 'transfer', 'class' => 'form-horizontal')) !!}
+                            {!! Form::open(array('url' => 'transfer', 'class' => 'form-horizontal', 'id' => 'transferForm')) !!}
                             <div class="col-md-12">
 
                                 <div class="form-group">
@@ -118,8 +118,12 @@
                                 <div>&nbsp;</div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <button ng-disabled="buttonDisabled" type="submit"
-                                                class="btn btn-success btn-block">{{trans('transfer.submit')}}</button>
+                                        <button ng-disabled="buttonDisabled || isSubmitting" type="button"
+                                                ng-click="confirmTransfer($event)"
+                                                class="btn btn-success btn-block">
+                                            <span ng-hide="isSubmitting">{{trans('transfer.submit')}}</span>
+                                            <span ng-show="isSubmitting">Processing...</span>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -140,5 +144,5 @@
 @endsection
 @section('script')
     {!! Html::script('js/angular.min.js', array('type' => 'text/javascript')) !!}
-    {!! Html::script('js/transfer.js?v=1.1.2', array('type' => 'text/javascript')) !!}
+    {!! Html::script('js/transfer.js?v=1.2.0', array('type' => 'text/javascript')) !!}
 @endsection
