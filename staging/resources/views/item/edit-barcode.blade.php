@@ -86,16 +86,20 @@ echo file_get_contents('https://pos.pets2ndhome.com/staging/barcode/barcode.php?
     <script type="text/javascript">
 function PrintElem(elem)
 {
-    var mywindow = window.open('', 'PRINT', 'height=400,width=750');
+    var mywindow = window.open('', 'PRINT', 'height=200,width=200');
 
-    //mywindow.document.write('<html><head><title>' + document.title  + '</title>');
-    //mywindow.document.write('</head><body >');
-    //mywindow.document.write('<h1>' + document.title  + '</h1>');
+    mywindow.document.write('<html><head><style>');
+    mywindow.document.write('@page { size: 35mm 20mm landscape; margin: 0; }');
+    mywindow.document.write('html, body { margin: 0; padding: 0; width: 35mm; height: 20mm; overflow: hidden; }');
+    mywindow.document.write('div { text-align: center; width: 35mm; box-sizing: border-box; }');
+    mywindow.document.write('span { font-size: 6pt; font-family: monospace; display: block; text-align: center; line-height: 1.1; padding: 0.5mm 0; }');
+    mywindow.document.write('svg { width: 33mm !important; height: auto !important; display: block; margin: 0 auto; }');
+    mywindow.document.write('</style></head><body>');
     mywindow.document.write(document.getElementById(elem).innerHTML);
-    //mywindow.document.write('</body></html>');
+    mywindow.document.write('</body></html>');
 
-    mywindow.document.close(); // necessary for IE >= 10
-    mywindow.focus(); // necessary for IE >= 10*/
+    mywindow.document.close();
+    mywindow.focus();
 
     mywindow.print();
     mywindow.close();
