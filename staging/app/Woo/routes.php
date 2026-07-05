@@ -11,5 +11,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('api')->prefix('api/woo')->group(function () {
     Route::get('products', 'App\Woo\Http\WooController@products');
     Route::post('order', 'App\Woo\Http\WooController@order');
+    Route::post('order-cancel', 'App\Woo\Http\WooController@orderCancel');
     Route::post('map', 'App\Woo\Http\WooController@map');
 });

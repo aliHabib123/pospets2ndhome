@@ -23,7 +23,8 @@ Tables: `woo_settings`, `woo_sync_queue`, `woo_orders`, and a nullable
 ## Endpoints (under `/api/woo`, no session/CSRF — auth is the shared secret)
 
 - `GET  /api/woo/products` — catalogue export for the plugin's import button. Auth: `Authorization: Bearer <secret>`.
-- `POST /api/woo/order` — a web order was placed; decrements stock. Auth: Bearer **and** `X-POS-Signature` (HMAC of the raw body). Idempotent on `woo_order_id`.
+- `POST /api/woo/order` — a web order was placed; decrements stock. Auth: Bearer **and** `X-POS-Signature` (HMAC of the raw body). Idempotent on `woo_order_id`. Audit rows tagged `WEB<order_id>`.
+- `POST /api/woo/order-cancel` — a web order was **fully cancelled**; restores stock. Same auth. Reverses exactly what was decremented (from the stored order payload), writes `WEBCANCEL<order_id>` audit rows, and flips `woo_orders.status` to `cancelled`. Idempotent, and a no-op for orders that were never decremented. Single-location: restock lands on the primary web location (`locations[0]`).
 - `POST /api/woo/map` — plugin reports `pos_item_id => woo_product_id` after import.
 
 ## Configuration

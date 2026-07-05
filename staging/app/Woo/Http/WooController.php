@@ -134,6 +134,66 @@ class WooController extends Controller
     }
 
     /**
+     * POST /api/woo/order-cancel — an order was fully cancelled; restore inventory.
+     *
+     * Reverses exactly what was decremented, using the line items stored when the
+     * order was processed. Idempotent: only restocks an order that was previously
+     * decremented and not already cancelled.
+     */
+    public function orderCancel(Request $request)
+    {
+        if ($deny = $this->authorizeBearer($request)) {
+            return $deny;
+        }
+
+        if (! WooSync::verify($request->getContent(), $request->header('X-POS-Signature'))) {
+            return response()->json(['error' => 'Invalid signature'], 401);
+        }
+
+        $orderId = (int) $request->input('woo_order_id');
+        if (! $orderId) {
+            return response()->json(['error' => 'Invalid payload'], 422);
+        }
+
+        $order = WooOrder::where('woo_order_id', $orderId)->first();
+
+        // Never decremented for this order → nothing to put back.
+        if (! $order) {
+            return response()->json(['ok' => true, 'skipped' => 'not_processed']);
+        }
+
+        // Already restocked → idempotent.
+        if ($order->status === 'cancelled') {
+            return response()->json(['ok' => true, 'duplicate' => true]);
+        }
+
+        // Reverse exactly what was decremented, from the stored processing payload.
+        $stored    = json_decode((string) $order->payload, true);
+        $lineItems = (is_array($stored) && isset($stored['line_items'])) ? $stored['line_items'] : [];
+
+        try {
+            DB::transaction(function () use ($orderId, $lineItems, $order) {
+                foreach ($lineItems as $line) {
+                    $itemId = $this->resolveItemId((array) $line);
+                    $qty    = isset($line['quantity']) ? (int) $line['quantity'] : 0;
+                    if ($itemId && $qty > 0) {
+                        $this->restoreItem($itemId, $qty, $orderId);
+                    }
+                }
+
+                $order->status       = 'cancelled';
+                $order->processed_at = now();
+                $order->save();
+            });
+        } catch (\Throwable $e) {
+            Log::error('Woo order cancel failed for #' . $orderId . ': ' . $e->getMessage());
+            return response()->json(['error' => 'Processing failed'], 500);
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
+    /**
      * Resolve a POS item id from a line item (prefer pos_item_id, fall back to SKU).
      */
     protected function resolveItemId(array $line): int
@@ -219,6 +279,51 @@ class WooController extends Controller
         $inventory->save();
 
         $iq->quantity = (int) $iq->quantity - $take;
+        $iq->save(); // Fires the observer → queues an absolute stock push back to Woo.
+    }
+
+    /**
+     * Restore `$qty` of an item on a full order cancellation. Single-location setup:
+     * the quantity is put back on the primary web location, writing a `WEBCANCEL<id>`
+     * audit row (positive in_out_qty).
+     */
+    protected function restoreItem(int $itemId, int $qty, int $orderId): void
+    {
+        $item = Item::find($itemId);
+        if (! $item || $item->type_id != 1) {
+            return; // Only tracked products carry stock.
+        }
+
+        $locations = WooSettings::locations();
+        if (empty($locations)) {
+            return;
+        }
+
+        $primary = $locations[0];
+        $userId  = WooSettings::systemUserId();
+
+        $iq = ItemQuantity::where('item_id', $itemId)
+            ->where('location_id', $primary)
+            ->first();
+
+        if (! $iq) {
+            // Should exist, but recreate so a restock is never silently lost.
+            $iq = new ItemQuantity;
+            $iq->item_id = $itemId;
+            $iq->location_id = $primary;
+            $iq->quantity = 0;
+        }
+
+        $inventory = new Inventory;
+        $inventory->item_id = $itemId;
+        $inventory->user_id = $userId;
+        $inventory->location_id = $primary;
+        $inventory->in_out_qty = $qty; // positive — stock returning
+        $inventory->remarks = 'WEBCANCEL' . $orderId;
+        $inventory->qty_before_transaction = (int) $iq->quantity;
+        $inventory->save();
+
+        $iq->quantity = (int) $iq->quantity + $qty;
         $iq->save(); // Fires the observer → queues an absolute stock push back to Woo.
     }
 }
