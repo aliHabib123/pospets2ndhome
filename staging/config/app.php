@@ -181,6 +181,12 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
 
+        /*
+         * WooCommerce integration (isolated under App\Woo). Remove this line to
+         * fully disable the integration.
+         */
+        App\Woo\WooServiceProvider::class,
+
 
 
 
