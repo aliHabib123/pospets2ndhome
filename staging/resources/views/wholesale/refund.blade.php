@@ -89,7 +89,7 @@
                                 <div class="form-group">
                                     <label for="payment_amount" class="col-sm-3 control-label">{{$currency}} {{trans('sale.payment_amount')}}</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" ng-model="customerPayment.amount_paid" id="payment_amount" required />
+                                        <input type="text" inputmode="decimal" autocomplete="off" comma-number class="form-control" ng-model="customerPayment.amount_paid" id="payment_amount" required />
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -106,8 +106,10 @@
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <div class="input-group-addon">{{$currency}}</div>
-                                            <input type="text" class="form-control" name="discount" id="discount" ng-model="SaleInvoice.discount" />
+                                            <input type="text" inputmode="decimal" autocomplete="off" comma-number class="form-control" name="discount" id="discount" ng-model="SaleInvoice.discount" />
                                         </div>
+                                        <span class="help-block" style="color:#a94442" ng-show="SaleInvoice.discount > sum(SaleItems)">{{trans('sale.discount')}} cannot exceed the sale total.</span>
+                                        <span class="help-block" style="color:#a94442" ng-show="SaleInvoice.discount < 0">{{trans('sale.discount')}} cannot be negative.</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -119,7 +121,7 @@
                                 <div>&nbsp;</div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <button class="btn btn-success btn-block" ng-click="updateWholesaleInvoice(SaleInvoice, SaleItems)">Update Sale</button>
+                                        <button class="btn btn-success btn-block" ng-disabled="SaleInvoice.discount < 0 || SaleInvoice.discount > sum(SaleItems)" ng-click="updateWholesaleInvoice(SaleInvoice, SaleItems)">Update Sale</button>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
@@ -141,5 +143,5 @@
 @endsection
 @section('script')
 {!! Html::script('js/angular.min.js', array('type' => 'text/javascript')) !!}
-{!! Html::script('js/wholesale-refund.js?v=1.0.0', array('type' => 'text/javascript')) !!}
+{!! Html::script('js/wholesale-refund.js?v=1.0.2', array('type' => 'text/javascript')) !!}
 @endsection

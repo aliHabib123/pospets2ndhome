@@ -94,14 +94,25 @@ class WholeSaleController extends Controller
         $dueAmount = 0;
         $discount_percentage = 0;
 
+        $discount = Input::get('discount');
+        $discount = is_numeric($discount) ? (float) $discount : 0;
+
+        $expectedTotal = 0;
+        foreach ($saleItems as $value) {
+            $expectedTotal += $value->wholesale_price * $value->quantity;
+        }
+
+        if ($discount < 0 || $discount > $expectedTotal) {
+            return redirect('/wholesales')->withErrors(['discount' => 'Discount must be between 0 and the sale total.']);
+        }
+
         $sales = new WholeSale();
         $sales->customer_id = Input::get('customer_id');
         $sales->user_id = Auth::user()->id;
         $sales->payment_type = Input::get('payment_type');
         $sales->comments = Input::get('comments');
         $sales->location_id = $request->session()->get('selectedLocationId');
-        $sales->discount = Input::get('discount');
-        $discount = Input::get('discount');
+        $sales->discount = $discount;
         $amountPaid = Input::get('payment_amount');
         $customerId = Input::get('customer_id');
         $paymentType = Input::get('payment_type');
@@ -170,7 +181,7 @@ class WholeSaleController extends Controller
                     }
                 }
             }
-            $discount_percentage = $discount * 100 / $total;
+            $discount_percentage = $total > 0 ? $discount * 100 / $total : 0;
         }
 
 

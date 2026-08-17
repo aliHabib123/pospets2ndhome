@@ -1,6 +1,56 @@
 (function () {
     var app = angular.module('tagpos', []);
 
+    app.directive('commaNumber', function () {
+        function unformat(value) {
+            return (value || '').toString().replace(/,/g, '');
+        }
+        function format(value) {
+            if (value === null || value === undefined || value === '') return '';
+            var parts = value.toString().split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return parts.join('.');
+        }
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function (scope, element, attrs, ctrl) {
+                var el = element[0];
+                ctrl.$parsers.push(function (viewValue) {
+                    var plain = unformat(viewValue);
+
+                    if (plain === '' || plain === '-') {
+                        ctrl.$setValidity('commaNumber', true);
+                        return plain === '' ? null : undefined;
+                    }
+                    if (!/^-?\d*\.?\d*$/.test(plain)) {
+                        ctrl.$setValidity('commaNumber', false);
+                        return undefined;
+                    }
+                    ctrl.$setValidity('commaNumber', true);
+
+                    var formatted = format(plain);
+                    if (formatted !== viewValue && el.selectionStart != null) {
+                        var cursor = el.selectionStart;
+                        var digitsBeforeCursor = unformat(viewValue.slice(0, cursor)).length;
+                        el.value = formatted;
+                        var pos = 0, count = 0;
+                        while (pos < formatted.length && count < digitsBeforeCursor) {
+                            if (formatted.charAt(pos) !== ',') count++;
+                            pos++;
+                        }
+                        el.setSelectionRange(pos, pos);
+                    }
+
+                    return parseFloat(plain);
+                });
+                ctrl.$formatters.push(function (modelValue) {
+                    return format(modelValue);
+                });
+            }
+        };
+    });
+
     console.log(app);
     app.controller("SearchItemCtrl", ['$scope', '$http', function ($scope, $http) {
 
@@ -75,4 +125,14 @@
 
 
     }]);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.forms['wholessales'];
+        var discountEl = document.getElementById('discount');
+        if (form && discountEl) {
+            form.addEventListener('submit', function () {
+                discountEl.value = (discountEl.value || '').replace(/,/g, '');
+            });
+        }
+    });
 })();

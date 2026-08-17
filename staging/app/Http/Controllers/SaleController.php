@@ -95,6 +95,18 @@ class SaleController extends Controller
         $total =  0;
         $sale_id =  0;
 
+        $discount = Input::get('discount');
+        $discount = is_numeric($discount) ? (float) $discount : 0;
+
+        $expectedTotal = 0;
+        foreach ($saleItems as $value) {
+            $expectedTotal += $value->selling_price * $value->quantity * $rate;
+        }
+
+        if ($discount < 0 || $discount > $expectedTotal) {
+            return redirect('/sales')->withErrors(['discount' => 'Discount must be between 0 and the sale total.']);
+        }
+
         $sales = new Sale;
         $sales->customer_id = Input::get('customer_id');
         $sales->user_id = Auth::user()->id;
@@ -102,8 +114,6 @@ class SaleController extends Controller
         $sales->comments = Input::get('comments');
         $sales->location_id = $request->session()->get('selectedLocationId');
         $sales->rate = $rate;
-        $discount = Input::get('discount');
-        //$discount = $discount * $rate;
         $sales->discount = $discount;
         $sales->save();
 
@@ -170,7 +180,7 @@ class SaleController extends Controller
             }
         }
 
-        $discount_percentage = $discount * 100 / $total;
+        $discount_percentage = $total > 0 ? $discount * 100 / $total : 0;
 
         DB::update("UPDATE sales SET  discount_percentage = $discount_percentage where id = $sale_id ");
         DB::update("UPDATE sale_items SET  discount = total_selling * $discount_percentage / 100 where sale_id = $sale_id");

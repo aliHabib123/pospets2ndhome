@@ -127,8 +127,10 @@
                                     <div class="col-sm-9">
                                         <div class="input-group">
                                             <div class="input-group-addon">{{$currency}}</div>
-                                            <input type="text" class="form-control" name="discount" id="discount" ng-model="discount"/>
+                                            <input type="text" inputmode="decimal" autocomplete="off" comma-number class="form-control" name="discount" id="discount" ng-model="discount"/>
                                         </div>
+                                        <span class="help-block" style="color:#a94442" ng-show="discount > sum(saletemp)">{{trans('sale.discount')}} cannot exceed the sale total.</span>
+                                        <span class="help-block" style="color:#a94442" ng-show="discount < 0">{{trans('sale.discount')}} cannot be negative.</span>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -141,7 +143,7 @@
                                 <div>&nbsp;</div>
                                 <div class="form-group">
                                     <div class="col-sm-12">
-                                        <button type="submit"  class="btn btn-success btn-block">{{trans('sale.submit')}}</button>
+                                        <button ng-disabled="discount < 0 || discount > sum(saletemp)" type="submit"  class="btn btn-success btn-block">{{trans('sale.submit')}}</button>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -162,5 +164,5 @@
 @endsection
 @section('script')
     {!! Html::script('js/angular.min.js', array('type' => 'text/javascript')) !!}
-    {!! Html::script('js/wholesale.js', array('type' => 'text/javascript')) !!}
+    {!! Html::script('js/wholesale.js?v=1.0.2', array('type' => 'text/javascript')) !!}
 @endsection

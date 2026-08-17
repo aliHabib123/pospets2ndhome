@@ -211,10 +211,21 @@ class RefundController extends Controller
         $userId = $invoice['user_id'];
         $sale_id = $invoice['id'];
         $discount = $invoice['discount'];
+        $discount = is_numeric($discount) ? (float) $discount : 0;
         $comments = $invoice['comments'];
         $updatedAt = date('Y-m-d G:i:s');
+
+        $expectedTotal = 0;
+        foreach ($items as $value) {
+            $expectedTotal += round($value['quantity'] * $value['selling_price'], 2);
+        }
+
+        if ($discount < 0 || $discount > $expectedTotal) {
+            return Response::json(['error' => 'Discount must be between 0 and the sale total.'], 422);
+        }
+
         //print_r($discount);
-        $updateSaleInvoice = DB::update("update sales set discount = '$discount', comments = '$comments', updated_at = '$updatedAt' where id = $sale_id");
+        $updateSaleInvoice = DB::update("update sales set discount = $discount, comments = '$comments', updated_at = '$updatedAt' where id = $sale_id");
 
         $total =  0;
         foreach ($items as $value) {
@@ -307,13 +318,24 @@ class RefundController extends Controller
         $userId = $invoice['user_id'];
         $sale_id = $invoice['id'];
         $discount = $invoice['discount'];
+        $discount = is_numeric($discount) ? (float) $discount : 0;
         $comments = $invoice['comments'];
         $updatedAt = date('Y-m-d G:i:s');
         $customerId = $invoice['customer_id'];
         $amountPaid = Input::get('paymentAmount');
         $customerId = Input::get('customerId');
         $paymentType = Input::get('paymentType');
-        $updateSaleInvoice = DB::update("update whole_sales set discount = '$discount', comments = '$comments', user_id = '$userId', customer_id = '$customerId', updated_at = '$updatedAt' where id = $sale_id");
+
+        $expectedTotal = 0;
+        foreach ($items as $value) {
+            $expectedTotal += round($value['quantity'] * $value['selling_price'], 2);
+        }
+
+        if ($discount < 0 || $discount > $expectedTotal) {
+            return Response::json(['error' => 'Discount must be between 0 and the sale total.'], 422);
+        }
+
+        $updateSaleInvoice = DB::update("update whole_sales set discount = $discount, comments = '$comments', user_id = '$userId', customer_id = '$customerId', updated_at = '$updatedAt' where id = $sale_id");
         $total =  0;
         if (count($items) > 0) {
             foreach ($items as $value) {

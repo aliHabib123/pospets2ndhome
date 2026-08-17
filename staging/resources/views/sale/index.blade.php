@@ -116,8 +116,10 @@
                                 <div class="col-sm-9">
                                     <div class="input-group">
                                         <div class="input-group-addon">{{$sales_currency}}</div>
-                                        <input type="text" class="form-control" name="discount" id="discount" ng-model="discount" />
+                                        <input type="text" inputmode="decimal" autocomplete="off" comma-number class="form-control" name="discount" id="discount" ng-model="discount" />
                                     </div>
+                                    <span class="help-block" style="color:#a94442" ng-show="discount > sum(saletemp)">{{trans('sale.discount')}} cannot exceed the sale total.</span>
+                                    <span class="help-block" style="color:#a94442" ng-show="discount < 0">{{trans('sale.discount')}} cannot be negative.</span>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -135,7 +137,7 @@
                                 <div class="col-sm-9">
                                     <div class="input-group">
                                         <div class="input-group-addon">USD</div>
-                                        <input type="text" class="form-control" id="payment_usd" ng-model="paymentUSD" ng-change="calculateChange()" />
+                                        <input type="text" inputmode="decimal" autocomplete="off" comma-number class="form-control" id="payment_usd" ng-model="paymentUSD" ng-change="calculateChange()" />
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +146,7 @@
                                 <div class="col-sm-9">
                                     <div class="input-group">
                                         <div class="input-group-addon">{{$sales_currency}}</div>
-                                        <input type="text" class="form-control" id="payment_lbp" ng-model="paymentLBP" ng-change="calculateChange()" />
+                                        <input type="text" inputmode="decimal" autocomplete="off" comma-number class="form-control" id="payment_lbp" ng-model="paymentLBP" ng-change="calculateChange()" />
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +162,7 @@
                             <div>&nbsp;</div>
                             <div class="form-group">
                                 <div class="col-sm-12">
-                                    <button ng-disabled="buttonDisabled" type="submit" class="btn btn-success btn-block">{{trans('sale.submit')}}</button>
+                                    <button ng-disabled="buttonDisabled || discount < 0 || discount > sum(saletemp)" type="submit" class="btn btn-success btn-block">{{trans('sale.submit')}}</button>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -180,5 +182,5 @@
 @endsection
 @section('script')
 {!! Html::script('js/angular.min.js', array('type' => 'text/javascript')) !!}
-{!! Html::script('js/sale.js?v=1.1.2', array('type' => 'text/javascript')) !!}
+{!! Html::script('js/sale.js?v=1.1.5', array('type' => 'text/javascript')) !!}
 @endsection
